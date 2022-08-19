@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
+from tkinter import filedialog
+
+import os
+
 
 class LabelInput(tk.Frame):
     def __init__(
@@ -67,36 +71,48 @@ class FolderInfo(tk.Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.inputs = {}
-        folderpath = ""
+        extensions = self.get_extensions()
 
         folderinfo = tk.LabelFrame(self, text="Folder Info")
 
         self.inputs["folder"] = LabelInput(
-            folderinfo, f"{folderpath}", input_var=tk.StringVar()
+            folderinfo, "Folder path", input_var=tk.StringVar(), input_class=ttk.Entry
         )
-        self.inputs["folder"].grid(row=0, column=0, padx=5)
+        self.inputs["folder"].grid(row=0, column=0)
 
-        self.getpathbtn = tk.Button(
+        self.inputs["get_path"] = tk.Button(
             self, text="Folder to Organize", command=self.get_folder, bg="gray"
         )
-        self.getpathbtn.grid(row=1, column=0, pady=3)
+        self.inputs["get_path"].grid(row=1, column=0, pady=3, sticky=tk.W)
 
         self.inputs["extensions"] = LabelInput(
             folderinfo,
             "File Extension",
             input_class=ttk.Combobox,
             input_var=tk.StringVar(),
-            input_args={"values": [".csv", ".pdf"]},
+            input_args={"values": list(extensions)},
         )
         self.inputs["extensions"].grid(row=0, column=1)
 
+        folderinfo.grid(row=0, column=0, sticky=tk.W + tk.E)
+
     def get_folder(self):
-        print("folderpath variable")
+        folderpath = filedialog.askdirectory()
+        self.inputs["folder"].set(folderpath)
+
+    def get_extensions(self):
+        file_extensions = set()
+        listoffiles = [f for f in os.listdir(".") if os.path.isfile(f)]
+        for wo in listoffiles:
+            if wo not in file_extensions:
+                file_extensions.add(os.path.splitext(wo)[-1])
+        return file_extensions
 
     def get(self):
         data = {}
         for key, widget in self.inputs.items():
-            data[key].widget.get()
+            if type(widget) != tk.Button:
+                data[key].widget.get()
         return data
 
     def reset(self):
@@ -115,15 +131,16 @@ class FileApp(tk.Tk):
         ).grid(row=0)
 
         self.folderwidget = FolderInfo(self)
-        self.folderwidget.grid(row=1, padx=10)
+        self.folderwidget.grid(row=2, padx=10)
 
         self.organizebtn = tk.Button(
             self, text="Organize", command=self.on_organize, bg="gray"
         )
-        self.organizebtn.grid(sticky=tk.E, row=3, pady=8, padx=5)
+        self.organizebtn.grid(sticky=tk.E + tk.S, row=2, column=1, pady=3, padx=5)
 
     def on_organize(self):
-        print("Organize")
+        info = self.folderwidget.get()
+        print(info)
 
 
 if __name__ == "__main__":
