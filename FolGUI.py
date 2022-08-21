@@ -4,6 +4,8 @@ from tkinter import ttk
 from tkinter import filedialog
 
 import os
+import shutil
+import sys
 
 
 class LabelInput(tk.Frame):
@@ -112,7 +114,7 @@ class FolderInfo(tk.Frame):
         data = {}
         for key, widget in self.inputs.items():
             if type(widget) != tk.Button:
-                data[key].widget.get()
+                data[key] = widget.get()
         return data
 
     def reset(self):
@@ -140,8 +142,13 @@ class FileApp(tk.Tk):
 
     def on_organize(self):
         info = self.folderwidget.get()
-        print(info)
-
+        location = os.listdir(f"/{info['extensions']}_files")
+        directory_path = os.path.join(info['folder'] + location)
+        for filename in info['folder']:
+            if not filename.endswith(info['extensions']):
+                continue
+            else:
+                shutil.move('' + filename, directory_path)
 
 if __name__ == "__main__":
     app = FileApp()
