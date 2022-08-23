@@ -73,7 +73,6 @@ class FolderInfo(tk.Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.inputs = {}
-        extensions = self.get_extensions()
 
         folderinfo = tk.LabelFrame(self, text="Folder Info")
 
@@ -92,7 +91,24 @@ class FolderInfo(tk.Frame):
             "File Extension",
             input_class=ttk.Combobox,
             input_var=tk.StringVar(),
-            input_args={"values": list(extensions)},
+            input_args={
+                "values": [
+                    ".csv",
+                    ".pdf",
+                    ".jpg",
+                    ".txt",
+                    ".png",
+                    ".xls",
+                    ".xlsx",
+                    ".py",
+                    ".docx",
+                    ".doc",
+                    ".js",
+                    ".html",
+                    ".css",
+                    ".js",
+                ]
+            },
         )
         self.inputs["extensions"].grid(row=0, column=1)
 
@@ -102,6 +118,7 @@ class FolderInfo(tk.Frame):
         folderpath = filedialog.askdirectory()
         self.inputs["folder"].set(folderpath)
 
+    # TODO get extensions from selected folder, update combobox values
     def get_extensions(self):
         file_extensions = set()
         listoffiles = [f for f in os.listdir(".") if os.path.isfile(f)]
@@ -143,12 +160,13 @@ class FileApp(tk.Tk):
     def on_organize(self):
         info = self.folderwidget.get()
         location = os.listdir(f"/{info['extensions']}_files")
-        directory_path = os.path.join(info['folder'] + location)
-        for filename in info['folder']:
-            if not filename.endswith(info['extensions']):
+        directory_path = os.path.join(info["folder"] + location)
+        for filename in info["folder"]:
+            if not filename.endswith(info["extensions"]):
                 continue
             else:
-                shutil.move('' + filename, directory_path)
+                shutil.move("" + filename, directory_path)
+
 
 if __name__ == "__main__":
     app = FileApp()
