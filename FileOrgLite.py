@@ -1,6 +1,6 @@
 import shutil, os, sys
 
-print(8*"*"+ "File Organizer Lite v.0.1" + 8*"*")
+print(8*"*"+ "File Organizer Lite v.0.2" + 8*"*")
 
 location = input('Directory to organize (E.g example/directory/: ')
 extension = input('Extention of files to organize (E.g .txt): ')
